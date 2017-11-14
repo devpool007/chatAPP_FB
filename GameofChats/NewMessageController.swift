@@ -7,89 +7,144 @@
 //
 
 import UIKit
+import Firebase
 
 class NewMessageController: UITableViewController {
-
+    
+    let cellID = "cell"
+    var Users = [USer]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(goBackToMessageController))
+        tableView.register(UserCell.self, forCellReuseIdentifier: cellID)
+        
+        fetchUser()
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func fetchUser(){
+        
+        Database.database().reference().child("User").observe(.childAdded, with: { (snapshot) in
+            
+            if let dictionary = snapshot.value as? [String:AnyObject] {
+                let user = USer()
+                user.name = dictionary["name"] as? String
+                user.email = dictionary["email"] as? String
+                user.profileImageUrl = dictionary["profileImageUrl"] as? String
+                print(user.name, user.email, user.profileImageUrl)
+                self.Users.append(user)
+               
+                //this will crash becasue of background thread, so lets use dispatch_async to fix
+                DispatchQueue.main.async {
+                     self.tableView.reloadData()
+                }
+                
+                
+                
+            }
+            
+            //print("User found")
+            
+        }, withCancel: nil)
+        
     }
-
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+    
+    
+    func goBackToMessageController(){
+        
+        dismiss(animated: true, completion: nil)
+        
     }
-
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 72
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        return Users.count
     }
-
-    /*
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+    
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath)  as! UserCell
+        
+        let users = Users[indexPath.row]
+        cell.textLabel?.text = users.name
+        cell.detailTextLabel?.text = users.email
 
-        // Configure the cell...
-
+        
+        if let profileImage = users.profileImageUrl {
+            
+            cell.profileImage.loadImageUsingCache(urlString: profileImage)
+            
+//            let url = URL(string: profileImage)
+//            URLSession.shared.dataTask(with: url!, completionHandler: { (data, response, error) in
+//                
+//                //download hits an error so lets return out
+//                if error != nil {
+//                    print(error!)
+//                    return
+//                }
+//                
+//                DispatchQueue.main.async(execute: { () -> Void in
+//                    
+//                    cell.profileImage.image = UIImage(data: data!)
+//
+//                    })
+//               
+//            }).resume()
+        }
+    
+    
         return cell
+    
+       
+    
+}
+
+class UserCell: UITableViewCell{
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        textLabel?.frame = CGRect(x: 64, y: textLabel!.frame.origin.y-2, width: textLabel!.frame.width, height: textLabel!.frame.height)
+        
+        detailTextLabel?.frame = CGRect(x: 64, y: detailTextLabel!.frame.origin.y+2, width: detailTextLabel!.frame.width, height: detailTextLabel!.frame.height)
     }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    
+    
+    let profileImage: UIImageView = {
+      
+        let view = UIImageView()
+        view.layer.cornerRadius = 24
+        view.layer.masksToBounds = true
+        view.contentMode = .scaleAspectFill
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+        
+    }()
+    
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier : String?) {
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+        
+        addSubview(profileImage)
+        NSLayoutConstraint.activate([
+            
+            profileImage.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8),
+            profileImage.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            profileImage.widthAnchor.constraint(equalToConstant: 48),
+            profileImage.heightAnchor.constraint(equalToConstant: 48)
+            ])
+        
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    
+    
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+}
 
 }
