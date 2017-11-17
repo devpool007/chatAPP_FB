@@ -11,6 +11,8 @@ import Firebase
 
 class LoginController: UIViewController {
     
+    var messageController : MessagesController?
+    
     var containerHeightAnchor: NSLayoutConstraint?
     var nameTextFieldHeightAnchor : NSLayoutConstraint?
     var emailTextFieldHeightAnchor : NSLayoutConstraint?
@@ -105,6 +107,8 @@ class LoginController: UIViewController {
             }
             
             //successfully logged in
+            self.messageController?.fetchUserAndSetupNavbarTitle()
+            
             self.dismiss(animated: true, completion: nil)
         }
         

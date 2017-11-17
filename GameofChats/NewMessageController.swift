@@ -21,31 +21,50 @@ class NewMessageController: UITableViewController {
         
         fetchUser()
     }
-
+    
+    
+//    func addUser(){
+//        Database.database().reference().child("User").observeSingleEvent(of: .childAdded, with: { (<#DataSnapshot#>) in
+//            <#code#>
+//        }) { (<#Error#>) in
+//            <#code#>
+//        }
+//        
+//        
+//        
+//        
+//        
+//    }
+    
+    
     func fetchUser(){
         
         Database.database().reference().child("User").observe(.childAdded, with: { (snapshot) in
             
-            if let dictionary = snapshot.value as? [String:AnyObject] {
-                let user = USer()
-                user.name = dictionary["name"] as? String
-                user.email = dictionary["email"] as? String
-                user.profileImageUrl = dictionary["profileImageUrl"] as? String
-                print(user.name, user.email, user.profileImageUrl)
-                self.Users.append(user)
-               
-                //this will crash becasue of background thread, so lets use dispatch_async to fix
-                DispatchQueue.main.async {
-                     self.tableView.reloadData()
-                }
-                
-                
+            guard let data = self.getUserSnapshot(snapshot: snapshot) else {return}
+            self.Users.append(data)
+            self.tableView.insertRows(at: [IndexPath(row:self.Users.count - 1, section : 0)], with: .left)
+//            DispatchQueue.main.async {
+//                self.tableView.reloadData()
+//            }
+            
+            
+        }, withCancel: nil)
+        
+        Database.database().reference().child("User").observe(.childRemoved, with: { (snapshot) in
+            
+            var index = self.Users.index(where: {
+                return ($0.key == snapshot.key)
+            })
+            index = index ?? -1
+            
+            if(index != -1){
+                self.Users.remove(at: index!);
+                self.tableView.deleteRows(at: [IndexPath(row: index!, section: 0)], with: .right)
                 
             }
             
-            //print("User found")
-            
-        }, withCancel: nil)
+        })
         
     }
     
@@ -147,4 +166,23 @@ class UserCell: UITableViewCell{
     }
 }
 
+}
+
+extension NewMessageController{
+    func getUserSnapshot(snapshot:DataSnapshot) -> USer?{
+        
+        if let dictionary = snapshot.value as? [String:AnyObject] {
+            let user = USer()
+            user.key = snapshot.key
+            user.name = dictionary["name"] as? String
+            user.email = dictionary["email"] as? String
+            user.profileImageUrl = dictionary["profileImageUrl"] as? String
+            return user;
+            
+        }
+        return nil
+        
+    }
+    
+    
 }
