@@ -43,7 +43,8 @@ class NewMessageController: UITableViewController {
             
             guard let data = self.getUserSnapshot(snapshot: snapshot) else {return}
             self.Users.append(data)
-            self.tableView.insertRows(at: [IndexPath(row:self.Users.count - 1, section : 0)], with: .left)
+            self.tableView.insertRows(at: [IndexPath(row:self.Users.count - 1, section : 0)], with: .right)
+            data.id = snapshot.key
 //            DispatchQueue.main.async {
 //                self.tableView.reloadData()
 //            }
@@ -77,6 +78,15 @@ class NewMessageController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 72
+    }
+    
+    var messagescontroller : MessagesController?
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        dismiss(animated: true, completion: nil)
+        print("dismissed")
+        let user = self.Users[indexPath.row]
+        self.messagescontroller?.showChatControllerForUser(user: user)
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -120,50 +130,6 @@ class NewMessageController: UITableViewController {
     
        
     
-}
-
-class UserCell: UITableViewCell{
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        textLabel?.frame = CGRect(x: 64, y: textLabel!.frame.origin.y-2, width: textLabel!.frame.width, height: textLabel!.frame.height)
-        
-        detailTextLabel?.frame = CGRect(x: 64, y: detailTextLabel!.frame.origin.y+2, width: detailTextLabel!.frame.width, height: detailTextLabel!.frame.height)
-    }
-    
-    
-    let profileImage: UIImageView = {
-      
-        let view = UIImageView()
-        view.layer.cornerRadius = 24
-        view.layer.masksToBounds = true
-        view.contentMode = .scaleAspectFill
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-        
-    }()
-    
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier : String?) {
-        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
-        
-        addSubview(profileImage)
-        NSLayoutConstraint.activate([
-            
-            profileImage.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8),
-            profileImage.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            profileImage.widthAnchor.constraint(equalToConstant: 48),
-            profileImage.heightAnchor.constraint(equalToConstant: 48)
-            ])
-        
-    }
-    
-    
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
 
 }

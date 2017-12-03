@@ -100,7 +100,7 @@ class LoginController: UIViewController {
             return
         }
 
-        Auth.auth().signIn(withEmail: email, password: pass) { (user, error) in
+        Auth.auth().signIn(withEmail: email,password : pass) { (user, error) in
             if error != nil {
                 print(error ?? "Oops U are not registered")
                 return

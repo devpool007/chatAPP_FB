@@ -7,11 +7,14 @@
 //
 
 import UIKit
-
+import Firebase
 class USer: NSObject
 {
     var name : String?
     var email : String?
     var profileImageUrl : String?
     var key : String?
+    var id : String?
+
+
 }
