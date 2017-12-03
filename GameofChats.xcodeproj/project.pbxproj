@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		373FB30B1FB5BE82005E21A5 /* LoginController+handler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 373FB30A1FB5BE82005E21A5 /* LoginController+handler.swift */; };
 		37468D261FB07E7D00196FC8 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37468D251FB07E7D00196FC8 /* LoginController.swift */; };
+		374EA2541FC53DE7002DD461 /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374EA2531FC53DE7002DD461 /* ChatLogController.swift */; };
 		37751DFB1FB49ADB002311B4 /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37751DFA1FB49ADB002311B4 /* NewMessageController.swift */; };
 		37751DFE1FB4A42A002311B4 /* USer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37751DFD1FB4A42A002311B4 /* USer.swift */; };
 		37766EA51FB33DEF008622DB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 37766EA41FB33DEF008622DB /* GoogleService-Info.plist */; };
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		373FB30A1FB5BE82005E21A5 /* LoginController+handler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LoginController+handler.swift"; sourceTree = "<group>"; };
 		37468D251FB07E7D00196FC8 /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		374EA2531FC53DE7002DD461 /* ChatLogController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
 		37751DFA1FB49ADB002311B4 /* NewMessageController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
 		37751DFD1FB4A42A002311B4 /* USer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = USer.swift; sourceTree = "<group>"; };
 		37766EA41FB33DEF008622DB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 				37751DFA1FB49ADB002311B4 /* NewMessageController.swift */,
 				37468D251FB07E7D00196FC8 /* LoginController.swift */,
 				373FB30A1FB5BE82005E21A5 /* LoginController+handler.swift */,
+				374EA2531FC53DE7002DD461 /* ChatLogController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -258,6 +261,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				374EA2541FC53DE7002DD461 /* ChatLogController.swift in Sources */,
 				37DB5C101FADF69900805530 /* MessagesController.swift in Sources */,
 				37751DFB1FB49ADB002311B4 /* NewMessageController.swift in Sources */,
 				373FB30B1FB5BE82005E21A5 /* LoginController+handler.swift in Sources */,
