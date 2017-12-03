@@ -60,7 +60,7 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
     lazy var inputTextField: UITextField = {
     
         let view = UITextField()
-        view.placeholder = "Enter Message..."
+        view.attributedPlaceholder = NSAttributedString(string: "Enter Message...",attributes: [NSForegroundColorAttributeName: UIColor.white])
         view.translatesAutoresizingMaskIntoConstraints = false
         view.textColor = .white
         view.delegate = self
@@ -72,6 +72,8 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        collectionView?.contentInset = UIEdgeInsetsMake(8, 0, 58, 0)
+        collectionView?.scrollIndicatorInsets = UIEdgeInsetsMake(0, 0, 50, 0)
         collectionView?.alwaysBounceVertical = true
         collectionView?.backgroundColor = .white
         collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellId)
@@ -87,18 +89,42 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
         
         let message = messages[indexPath.item]
         cell.textView.text = message.text
+        
+        //lets modify width of bubbleView somehow???
+        cell.bubbleWidthAnchor?.constant = estimateFrameForText(text: message.text!).width + 32
         return cell
     }
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        collectionView?.collectionViewLayout.invalidateLayout()
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 80)
-        //change it to .width sometime and check if same comes?
+        
+        var height: CGFloat = 80
+        //get estimated height somehow ??
+        if let text = messages[indexPath.item].text {
+            
+            height = estimateFrameForText(text: text).height + 20
+            
+        }
+        
+        
+        return CGSize(width: view.frame.width, height: height)
+        
+    }
+    
+    private func estimateFrameForText(text : String) -> CGRect{
+        
+        let size = CGSize(width: 200, height: 1000)
+        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+        return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: 16)], context: nil)
     }
     
     
 func  setupInputFields() {
         let container = UIView()
-        container.backgroundColor = .gray
+        container.backgroundColor = UIColor(red: 55/255, green: 155/255, blue: 229/255, alpha: 1.0)
         container.translatesAutoresizingMaskIntoConstraints = false
     
         view.addSubview(container)
@@ -114,7 +140,7 @@ func  setupInputFields() {
     let sendButton = UIButton(type : .system)
         sendButton.setTitle("Send", for: .normal)
         sendButton.translatesAutoresizingMaskIntoConstraints = false
-        sendButton.tintColor = UIColor(red: 42/255, green: 43/255, blue: 54/255, alpha: 1.0)
+        sendButton.tintColor = .white
         container.addSubview(sendButton)
     
         //constraints
@@ -165,6 +191,8 @@ func  setupInputFields() {
                 print(error!)
                 return
             }
+            
+            self.inputTextField.text = nil
             
             let userMessageRef = Database.database().reference().child("user-messages").child(fromID!)
             
