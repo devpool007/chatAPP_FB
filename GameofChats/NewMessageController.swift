@@ -13,10 +13,13 @@ class NewMessageController: UITableViewController {
     
     let cellID = "cell"
     var Users = [USer]()
+    var timer: Timer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(goBackToMessageController))
+         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.title = "Your Contacts"
         tableView.register(UserCell.self, forCellReuseIdentifier: cellID)
         
         fetchUser()
@@ -69,6 +72,14 @@ class NewMessageController: UITableViewController {
         
     }
     
+    func handleReloadTable(){
+        
+        DispatchQueue.main.async {
+            print("we reloaded our table view")
+            self.tableView.reloadData()
+        }
+        
+    }
     
     func goBackToMessageController(){
         
@@ -145,7 +156,14 @@ extension NewMessageController{
             user.profileImageUrl = dictionary["profileImageUrl"] as? String
             return user;
             
+           
         }
+        
+        //workaround so that table get reloaded less time and there is no issue of wrong image reloading
+        self.timer?.invalidate()
+        print("we just cancelled our timer")
+        self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
+        print("schedule a table reload in 0.1 sec")
         return nil
         
     }

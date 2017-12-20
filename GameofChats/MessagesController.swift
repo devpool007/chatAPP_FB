@@ -16,10 +16,9 @@ class MessagesController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         checkIfUserLoggedIn()
-
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self , action: #selector(handleLogout) )
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(handleMessage))
-    
+
         tableView.register(UserCell.self, forCellReuseIdentifier: cellID)
         
 
@@ -29,37 +28,6 @@ class MessagesController: UITableViewController {
     var messages = [Message]()
     var messagesDictionary = [String: Message]()
     
-    func observeMessages() {
-        
-        let ref = Database.database().reference().child("messages")
-        ref.observe(.childAdded, with: { (snapshot) in
-            
-            if let dictionary = snapshot.value as? [String : Any]{
-                let message = Message()
-                message.fromID = dictionary["fromId"] as? String
-                message.text = dictionary["text"] as? String
-                message.timeStamp = dictionary["timeStamp"] as? NSNumber
-                message.toID = dictionary["toId"] as? String
-                self.messages.append(message)
-                
-                if let toId = message.toID {
-                    self.messagesDictionary[toId] = message
-                    
-                    self.messages = Array(self.messagesDictionary.values)
-                    self.messages.sort(by: { (Message1, Message2) -> Bool in
-                        return (Message1.timeStamp?.intValue)! > (Message2.timeStamp?.intValue)!
-                        
-                    })
-                }
-                
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-                
-            }
-            
-        }, withCancel: nil)
-    }
     
     func observeUserMessages(){
         
@@ -93,14 +61,27 @@ class MessagesController: UITableViewController {
                             
                         })
                     }
-                    
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
+                //workaround so that table get reloaded less time and there is no issue of wrong image reloading
+                   self.timer?.invalidate()
+                    print("we just cancelled our timer")
+                   self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
+                   print("schedule a table reload in 0.1 sec")
                     
                 }            })
             
         }, withCancel: nil)
+    }
+    
+    var timer: Timer?
+    
+    
+    func handleReloadTable(){
+    
+        DispatchQueue.main.async {
+           print("we reloaded our table view")
+            self.tableView.reloadData()
+        }
+        
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -253,7 +234,7 @@ class MessagesController: UITableViewController {
         let chatLog = chatLogController(collectionViewLayout: UICollectionViewFlowLayout())
         chatLog.user = user
         navigationController?.pushViewController(chatLog, animated: true)
-        
+        navigationController?.navigationBar.prefersLargeTitles = true
         
     }
     

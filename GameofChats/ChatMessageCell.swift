@@ -21,16 +21,30 @@ class ChatMessageCell: UICollectionViewCell {
         return view
     }()
    
+    static let bluecolor = UIColor(red: 55/255, green: 155/255, blue: 229/255, alpha: 1.0)
+    static let graycolor = UIColor(red: 240/255, green: 240/255, blue: 240/255, alpha: 1.0)
+    
     let bubbleView : UIView = {
-     
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor(red: 55/255, green: 155/255, blue: 229/255, alpha: 1.0)
+        view.backgroundColor = bluecolor
         view.layer.cornerRadius = 16
         return view
     }()
     
+    let profileImageView : UIImageView = {
+        let view = UIImageView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.image = UIImage(named: "devu")
+        view.layer.cornerRadius = 16
+        view.contentMode = .scaleAspectFill
+        view.layer.masksToBounds = true
+        return view
+    }()
+    
     var bubbleWidthAnchor: NSLayoutConstraint?
+    var bubbleViewRightAnchor : NSLayoutConstraint?
+    var bubbleViewLeftAnchor : NSLayoutConstraint?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,8 +52,22 @@ class ChatMessageCell: UICollectionViewCell {
         
         addSubview(bubbleView)
         addSubview(textView)
+        addSubview(profileImageView)
+        
         NSLayoutConstraint.activate([
-            bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor,constant:-8),
+            profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8),
+            profileImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            profileImageView.widthAnchor.constraint(equalToConstant: 32),
+            profileImageView.heightAnchor.constraint(equalToConstant: 32)
+            ])
+        
+        bubbleViewRightAnchor = bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor,constant:-8)
+        bubbleViewRightAnchor?.isActive = true
+        
+        bubbleViewLeftAnchor = bubbleView.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8)
+        
+        
+        NSLayoutConstraint.activate([
             bubbleView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor),
             ])
