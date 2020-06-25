@@ -15,6 +15,6 @@ class USer: NSObject
     var profileImageUrl : String?
     var key : String?
     var id : String?
-
+ 
 
 }
