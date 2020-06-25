@@ -77,7 +77,6 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
         collectionView?.backgroundColor = .white
         collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellId)
         collectionView?.keyboardDismissMode = .interactive
-//        setupInputFields()
 //
 //        setupKeyboardObsevers()
     }
@@ -175,6 +174,8 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
         
     }
     
+
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return messages.count
     }
@@ -243,61 +244,7 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
     }
     
     var containerViewBottomAnchor : NSLayoutConstraint?
-    
-func  setupInputFields() {
-        let container = UIView()
-        container.backgroundColor = UIColor(red: 55/255, green: 155/255, blue: 229/255, alpha: 1.0)
-        container.translatesAutoresizingMaskIntoConstraints = false
-    
-        view.addSubview(container)
-    
-        //constraints
-        NSLayoutConstraint.activate([
-            container.leftAnchor.constraint(equalTo: view.leftAnchor),
-            container.widthAnchor.constraint(equalTo: view.widthAnchor),
-            container.heightAnchor.constraint(equalToConstant: 50)
-            ])
-    containerViewBottomAnchor = container.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-    containerViewBottomAnchor?.isActive = true
-    
-    let sendButton = UIButton(type : .system)
-        sendButton.setTitle("Send", for: .normal)
-        sendButton.translatesAutoresizingMaskIntoConstraints = false
-        sendButton.tintColor = .white
-        container.addSubview(sendButton)
-    
-        //constraints
-        NSLayoutConstraint.activate([
-            sendButton.rightAnchor.constraint(equalTo: container.rightAnchor),
-            sendButton.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-            sendButton.heightAnchor.constraint(equalTo: container.heightAnchor),
-            sendButton.widthAnchor.constraint(equalToConstant: 80)
-            ])
-        sendButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
-  
-        container.addSubview(inputTextField)
-    
-        //constraints
-        NSLayoutConstraint.activate([
-            inputTextField.leftAnchor.constraint(equalTo: container.leftAnchor, constant : 8),
-            inputTextField.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-            inputTextField.heightAnchor.constraint(equalTo: container.heightAnchor),
-            inputTextField.rightAnchor.constraint(equalTo: sendButton.leftAnchor)
-            ])
-    
-    let separatorView = UIView()
-        separatorView.backgroundColor = UIColor(red: 42/255, green: 43/255, blue: 54/255, alpha: 1.0)
-        separatorView.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(separatorView)
-    
-        //constraints
-        NSLayoutConstraint.activate([
-            separatorView.leftAnchor.constraint(equalTo: container.leftAnchor),
-            separatorView.rightAnchor.constraint(equalTo: container.rightAnchor),
-            separatorView.topAnchor.constraint(equalTo: container.topAnchor),
-            separatorView.heightAnchor.constraint(equalToConstant: 2)
-            ])
-}
+
 
     func handleSend() {
         

@@ -151,9 +151,9 @@ open class AnimatedImageView: UIImageView {
     }
 
     // This is for back compatibility that using regular UIImageView to show animated image.
-    override func shouldPreloadAllAnimation() -> Bool {
-        return false
-    }
+//    @objc override func shouldPreloadAllAnimation() -> Bool {
+//        return false
+//    }
 
     // MARK: - Private method
     /// Reset the animator.
