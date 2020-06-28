@@ -34,7 +34,7 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
                 
                 guard let dictionary = snapshot.value as? [String : Any] else {return}
                 
-                let message = Message()
+                let message = Message() //dictionary: dictionary
                 //I can use the below statement cause my keys dont match so take care next time cause now I have to waste more lines :(
                 //message.setValuesForKeys(dictionary)
                 message.fromID = dictionary["fromId"] as? String
@@ -42,6 +42,8 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
                 message.timeStamp = dictionary["timeStamp"] as? NSNumber
                 message.toID = dictionary["toId"] as? String
                 message.imageURL = dictionary["imageURL"] as? String
+                message.imageWidth = dictionary["imageWidth"] as? NSNumber
+                message.imageHeight = dictionary["imageHeight"] as? NSNumber
                 
                 if message.chatPartnerId() == self.user?.id{
                     self.messages.append(message)
@@ -187,7 +189,7 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
                     return
                 }
                 if let imageURL = metadata?.downloadURL()?.absoluteString {
-                    self.sendMessageWithImageURL(imageUrl: imageURL)
+                    self.sendMessageWithImageURL(imageUrl: imageURL, image: image)
                 }
                 
             })
@@ -196,33 +198,7 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
 
     }
     
-    private func sendMessageWithImageURL(imageUrl: String) {
-        let ref = Database.database().reference().child("messages")
-        let childRef = ref.childByAutoId()
-        let toID  = user?.id
-        let fromID = Auth.auth().currentUser?.uid
-        let timeStamp = Date.timeIntervalSinceReferenceDate
-        let values = ["imageURL" : imageUrl, "toId" : toID!, "fromId" : fromID!, "timeStamp" : timeStamp] as [String : Any]
-       
-        
-        childRef.updateChildValues(values) { (error, ref) in
-            if error != nil {
-                print(error!)
-                return
-            }
-            
-            self.inputTextField.text = nil
-            
-            let userMessageRef = Database.database().reference().child("user-messages").child(fromID!)
-            
-            let messageId = childRef.key
-            userMessageRef.updateChildValues([messageId : 1])
-            
-            let recipientUserMessagesRef = Database.database().reference().child("user-messages").child(toID!)
-            recipientUserMessagesRef.updateChildValues([messageId : 1])
-        }
-        
-    }
+    
     
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -294,6 +270,10 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
             cell.bubbleWidthAnchor?.constant = estimateFrameForText(text: text).width + 32
             
         }
+        else if message.imageURL != nil{
+            //fall in here when it's an image
+            cell.bubbleWidthAnchor?.constant = 200
+        }
         return cell
     }
     
@@ -338,12 +318,19 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         var height: CGFloat = 80
-        //get estimated height somehow ??
-        if let text = messages[indexPath.item].text {
+        
+        let message = messages[indexPath.item]
+        if let text = message.text {
             
             height = estimateFrameForText(text: text).height + 20
             
         }
+        
+        else if let  imageWidth = message.imageWidth?.floatValue, let imageHeight = message.imageHeight?.floatValue {
+            
+            height = CGFloat(imageHeight/imageWidth * 200)
+        }
+        
         let width = UIScreen.main.bounds.width
         return CGSize(width: width, height: height)
         
@@ -361,14 +348,27 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
 
     func handleSend() {
         
+         let properties = ["text" : inputTextField.text!] as [String : Any]
+         sendMessageWithProperties(properties: properties)
+        
+    }
+    
+    private func sendMessageWithImageURL(imageUrl: String, image : UIImage) {
+        let properties = ["imageURL" : imageUrl, "imageWidth" :image.size.width , "imageHeight" :image.size.height] as [String : Any]
+        sendMessageWithProperties(properties: properties)
+        
+    }
+    
+    private func sendMessageWithProperties(properties:  [String: Any] ){//22:46 
         let ref = Database.database().reference().child("messages")
         let childRef = ref.childByAutoId()
         let toID  = user?.id
         let fromID = Auth.auth().currentUser?.uid
         let timeStamp = Date.timeIntervalSinceReferenceDate
-        let values = ["text" : inputTextField.text!, "toId" : toID!, "fromId" : fromID!, "timeStamp" : timeStamp] as [String : Any]
-//        childRef.updateChildValues(values)
-        
+        var values: [String : Any] = ["toId" : toID!, "fromId" : fromID!, "timeStamp" : timeStamp]
+       
+        //append properties dictionary to values
+        properties.forEach({values[$0] = $1})
         childRef.updateChildValues(values) { (error, ref) in
             if error != nil {
                 print(error!)
@@ -385,7 +385,6 @@ class chatLogController : UICollectionViewController,UITextFieldDelegate,UIColle
             let recipientUserMessagesRef = Database.database().reference().child("user-messages").child(toID!)
             recipientUserMessagesRef.updateChildValues([messageId : 1])
         }
-        
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

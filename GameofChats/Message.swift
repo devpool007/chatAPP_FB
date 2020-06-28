@@ -16,9 +16,23 @@ class Message: NSObject {
     var timeStamp : NSNumber?
     var toID : String?
     var imageURL : String?
-    func chatPartnerId() -> String? {
-        
+    var imageWidth : NSNumber?
+    var imageHeight : NSNumber?
+    
+    func chatPartnerId() -> String?
+        {
         return fromID == Auth.auth().currentUser?.uid ? toID : fromID
-        
-       }
+    }
+    
+//    init(dictionary :[String : Any]) {
+//        super.init()
+//        fromID = dictionary["fromId"] as? String
+//        text = dictionary["text"] as? String
+//        timeStamp = dictionary["timeStamp"] as? NSNumber
+//        toID = dictionary["toId"] as? String
+//        imageURL = dictionary["imageURL"] as? String
+//        imageWidth = dictionary["imageWidth"] as? NSNumber
+//        imageHeight = dictionary["imageHeight"] as? NSNumber
+//    }
+    
 }
