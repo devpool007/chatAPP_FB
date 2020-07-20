@@ -3,12 +3,11 @@
 
 **Features**
 
-A full fledged chat application made using Firebase
+A full-fledged chat application made using Firebase
 
-The App has all the cutting edge features like Photo sharing , video sharing , instant messaging etc.
+The App has all the cutting edge features like Photo sharing, video sharing, instant messaging etc.
 
-Also the security, memory leakages and netwroking has been desgined as to make it as efficeint as possible
-
+Also, the security, memory leakages and networking has been designed to make it as efficient as possible
 
 **Status**
 
