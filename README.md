@@ -3,7 +3,7 @@
 
 **Features**
 
-A full-fledged chat application made using Firebase
+A full-fledged instant messaging application made using Firebase as backend.
 
 The App has all the cutting edge features like Photo sharing, video sharing, instant messaging etc.
 
