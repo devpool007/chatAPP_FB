@@ -16,4 +16,4 @@ The app is still in building progress.
 
 **Deadline**
 
-Approximately June,2019
+Approximately August,2020
