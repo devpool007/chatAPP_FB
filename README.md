@@ -13,6 +13,4 @@ Also, the security, memory leakages and networking has been designed to make it 
 
 The app is still in building progress.
 
-**Deadline**
 
-Approximately August,2020
